@@ -10,6 +10,7 @@ A small toolbox for converting `.wav` audio files to CyberConnect2's formats (`.
 ## How to use
 ### As a cli app
 `python -m cc2-audio-encoding hca <in_file.wav> <out_file.hca>`
+
 `python -m cc2-audio-encoding hca <in_file.wav> <out_file.hca> <t> <k1> <k2>`
 
 - t - encryption type
@@ -31,7 +32,6 @@ with open("audio.bnsf", "wb") as f:
 hca_bytes = encode_hca("some_file.wav", encryption={"t": 56, "k1": "012C9A53", "k2": "00000000"}):
 with open("audio.hca", "wb") as f:
     f.write(hca_bytes)
-    
 ```
 Just explore the source code. It's very small.
 
