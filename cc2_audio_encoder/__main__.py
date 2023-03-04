@@ -25,7 +25,12 @@ def cmd_bnsf(args):
     else:
         encode = bnsf.encode_mono
 
-    bnsf_bytes = encode(args.file_in)
+    if args.loop or args.loop_start or args.loop_end:
+        loop_info = {"start": args.loop_start, "end": args.loop_end}
+    else:
+        loop_info = None
+
+    bnsf_bytes = encode(args.file_in, loop_info)
 
     with open(args.file_out, "wb") as f:
         f.write(bnsf_bytes)
@@ -43,6 +48,9 @@ def main():
 
     parser_bnsf = subparsers.add_parser("bnsf", description="BNSF audio encoder")
     parser_bnsf.add_argument("--stereo", help="Encode as a stereo", action="store_true")
+    parser_bnsf.add_argument("--loop", help="Include loop info to the bnsf", action="store_true")
+    parser_bnsf.add_argument("--loop-start", help="Start of the loop (In samples). Default is 0. Implies --loop")
+    parser_bnsf.add_argument("--loop-end", help="End of the loop (In samples). Default is the last audio sample. Implies --loop")
     parser_bnsf.set_defaults(func=cmd_bnsf)
 
     parser.add_argument("file_in", type=str)

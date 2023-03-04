@@ -6,12 +6,17 @@ from cc2_audio_encoder.paths import IS14_ENCODER_EXE
 
 
 # https://github.com/vgmstream/vgmstream/blob/master/src/meta/bnsf.c
-def generate_header(data_size, n_samples, n_channels):
+def generate_header(data_size, n_samples, n_channels, loop_info=None):
     header = bytearray()
 
     # BNSF magic number + size
     header.extend(b"BNSF")
-    header.extend(to4B(data_size+40))
+
+    total_size = data_size + 40
+    if loop_info:
+        total_size += 16
+
+    header.extend(to4B(total_size))
     header.extend(b"IS14")
 
     # sfmt section
@@ -23,6 +28,16 @@ def generate_header(data_size, n_samples, n_channels):
     header.extend(to4B(0x00))              # loop_adjust
     header.extend(to2B(120 * n_channels))  # block_size 
     header.extend(to2B(640))               # block_samples
+
+    # loop section
+    if loop_info:
+        start = loop_info["start"] or 0
+        end = loop_info["end"] or n_samples
+
+        header.extend(b"loop")
+        header.extend(to4B(0x08)) # I HAVE NO IDEA WHAT THIS IS
+        header.extend(to4B(start))
+        header.extend(to4B(end-1))
 
     # sdat section
     header.extend(b"sdat")
@@ -39,7 +54,7 @@ def _encode_is14(pcm_filename):
             return f.read()
 
 
-def encode_mono(wav_filename):
+def encode_mono(wav_filename, loop_info=None):
     with utils.temp_file() as pcm_filename:
         pcm.encode(wav_filename, pcm_filename)
     
@@ -47,13 +62,13 @@ def encode_mono(wav_filename):
 
         is14bytes = _encode_is14(wav_filename)
 
-    bnsf = generate_header(len(is14bytes), n_samples, n_channels=1)
+    bnsf = generate_header(len(is14bytes), n_samples, n_channels=1, loop_info=loop_info)
     bnsf.extend(bytearray(is14bytes))
 
     return bnsf
 
 
-def encode_stereo(wav_filename):
+def encode_stereo(wav_filename, loop_info=None):
     with utils.temp_file() as pcm_l_filename, \
          utils.temp_file() as pcm_r_filename:
         
@@ -68,7 +83,7 @@ def encode_stereo(wav_filename):
             )
         ))
 
-    bnsf = generate_header(len(is14bytes), n_samples, n_channels=2)
+    bnsf = generate_header(len(is14bytes), n_samples, n_channels=2, loop_info=loop_info)
     bnsf.extend(is14bytes)
 
     return bnsf

@@ -25,8 +25,12 @@ For JoJo ASBR, these arguments would be: `-t 56 -k1 012C9A53 -k2 00000000`
 `python -m cc2_audio_encoder bnsf <in_file.wav> <out_file.bnsf>`
 
 To encode a stereo `bnsf`:
+
 `python -m cc2_audio_encoder bnsf --stereo <in_file.wav> <out_file.bnsf>`
 
+To include loop data into `bnsf` (use `-h` for further info):
+
+`python -m cc2_audio_encoder bnsf --loop <in_file.wav> <out_file.bnsf>`
 
 ### As a python module
 ```python
