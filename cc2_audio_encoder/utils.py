@@ -12,11 +12,12 @@ def temp_file():
     finally:
         try:
             os.remove(filename)  # Remove file
-        except:
+        except Exception:
             pass
+
         try:
             os.rmdir(tmpdir)  # Remove directory
-        except:
+        except Exception:
             pass
 
 
@@ -31,3 +32,10 @@ def chunks(lst, n):
     for i in range(0, len(lst), n):
         yield lst[i:i + n]
 
+
+def to2B(n):
+    return n.to_bytes(2, byteorder="big")
+
+
+def to4B(n):
+    return n.to_bytes(4, byteorder="big")
