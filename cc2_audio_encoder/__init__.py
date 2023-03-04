@@ -26,12 +26,12 @@ def to2B(n):
 
 
 # https://github.com/vgmstream/vgmstream/blob/master/src/meta/bnsf.c
-def generate_bnsf_header(size, samples, n_channels):
+def generate_bnsf_header(data_size, n_samples, n_channels):
     header = bytearray()
 
-    # BNSF magic number + header size
+    # BNSF magic number + size
     header.extend(b"BNSF")
-    header.extend(to4B(size+40))
+    header.extend(to4B(data_size+40))
     header.extend(b"IS14")
 
     # sfmt section
@@ -39,14 +39,14 @@ def generate_bnsf_header(size, samples, n_channels):
     header.extend(to4B(0x14))              # flags
     header.extend(to4B(n_channels))        # n_channels
     header.extend(to4B(0xBB80))            # sample_rate
-    header.extend(to4B(samples))           # n_samples
+    header.extend(to4B(n_samples))         # n_samples
     header.extend(to4B(0x00))              # loop_adjust
     header.extend(to2B(120 * n_channels))  # block_size 
     header.extend(to2B(640))               # block_samples
 
     # sdat section
     header.extend(b"sdat")
-    header.extend(to4B(size))
+    header.extend(to4B(data_size))
     
     return header
 

@@ -36,6 +36,7 @@ with open("audio.hca", "wb") as f:
 Just explore the source code. It's very small.
 
 ## Special thanks to:
+- [**vgmstream**](https://github.com/vgmstream/vgmstream/blob/master/src/meta/bnsf.c) for reverse engineering the `.bnsf` header
 - [**This amazing article**](https://exvsfbce.home.blog/2020/02/04/guide-to-encoding-bnsf-is14-audio-files-converting-wav-back-to-bnsf-is14/) for reverse engineering the `.bnsf` header
 - **NSUNS4 Toolbox** for the compiled IS14 encoder (`encode.exe`), which I was too lazy to compile myself
 - [**Deretore**](https://github.com/OpenCGSS/DereTore) for the HCA encoder and encrypter (`hcaenc.exe`, `hcacc.exe`)
