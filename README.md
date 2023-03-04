@@ -9,27 +9,34 @@ A small toolbox for converting `.wav` audio files to CyberConnect2's formats (`.
 
 ## How to use
 ### As a cli app
-`python -m cc2-audio-encoding hca <in_file.wav> <out_file.hca>`
+#### HCA
+`python -m cc2_audio_encoder hca <in_file.wav> <out_file.hca>`
 
-`python -m cc2-audio-encoding hca <in_file.wav> <out_file.hca> <t> <k1> <k2>`
+`python -m cc2_audio_encoder hca -t <t> -k1 <k1> -k2 <k2> <in_file.wav> <out_file.hca>`
 
 - t - encryption type
 - k1 - encryption key (1)
 - k2 - encryption key (2)
 
-For JoJo ASBR these parameters would be `56 012C9A53 00000000`
+For JoJo ASBR, these arguments would be: `-t 56 -k1 012C9A53 -k2 00000000`
 
-`python -m cc2-audio-encoding bnsf <in_file.wav> <out_file.bnsf>`
+#### BNSF
+
+`python -m cc2_audio_encoder bnsf <in_file.wav> <out_file.bnsf>`
+
+To encode a stereo `bnsf`:
+`python -m cc2_audio_encoder bnsf --stereo <in_file.wav> <out_file.bnsf>`
+
 
 ### As a python module
 ```python
-from cc2_audio_encoding import encode_bnsf, encode_hca
+from cc2_audio_encoder import bnsf, hca
 
-bnsf_bytes = encode_bnsf("some_file.wav")
+bnsf_bytes = bnsf.encode("some_file.wav")
 with open("audio.bnsf", "wb") as f:
     f.write(bnsf_bytes)
 
-hca_bytes = encode_hca("some_file.wav", encryption={"t": 56, "k1": "012C9A53", "k2": "00000000"}):
+hca_bytes = hca.encode("some_file.wav", encryption={"t": 56, "k1": "012C9A53", "k2": "00000000"}):
 with open("audio.hca", "wb") as f:
     f.write(hca_bytes)
 ```

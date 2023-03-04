@@ -1,27 +1,56 @@
-from sys import argv
+import argparse
 
 from cc2_audio_encoder import bnsf, hca
 
 
-if argv[1] == "bnsf":
-    bnsf_bytes = bnsf.encode_mono(argv[2])
-   
-    with open(argv[3], "wb") as f:
-        f.write(bnsf_bytes)
-
-if argv[1] == "stereo_bnsf":
-    bnsf_bytes = bnsf.encode_stereo(argv[2])
-    
-    with open(argv[3], "wb") as f:
-        f.write(bnsf_bytes)
-
-elif argv[1] == "hca":
-    if len(argv)>6:
-        encryption = { "t": argv[4], "k1": argv[5], "k2": argv[6] }
+def cmd_hca(args):
+    # TODO: there is probably a better way to do this.
+    if args.t and args.k1 and args.k2:
+        encryption = {"t": args.t, "k1": args.k1, "k2": args.k2}
+    elif args.t or args.k1 or args.k2:
+        print("hca encryption key consists of -t, -k1 and -k2 (you should use all of them)")
+        exit()
     else:
         encryption = None
+
+    hca_bytes = hca.encode(args.file_in, encryption)
     
-    hca_bytes = hca.encode(argv[2], encryption)
-    
-    with open(argv[3], "wb") as f:
+    with open(args.file_out, "wb") as f:
         f.write(hca_bytes)
+
+
+def cmd_bnsf(args):
+    if args.stereo:
+        encode = bnsf.encode_stereo
+    else:
+        encode = bnsf.encode_mono
+
+    bnsf_bytes = encode(args.file_in)
+
+    with open(args.file_out, "wb") as f:
+        f.write(bnsf_bytes)
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers(prog="python3 -m cc2_audio_encoder")
+
+    parser_hca = subparsers.add_parser("hca", description="HCA audio encoder + encryptor")
+    parser_hca.add_argument("-t", help="Encryption type", type=str)
+    parser_hca.add_argument("-k1", help="Key part 1", type=str)
+    parser_hca.add_argument("-k2", help="Key part 2", type=str)
+    parser_hca.set_defaults(func=cmd_hca)
+
+    parser_bnsf = subparsers.add_parser("bnsf", description="BNSF audio encoder")
+    parser_bnsf.add_argument("--stereo", help="Encode as a stereo", action="store_true")
+    parser_bnsf.set_defaults(func=cmd_bnsf)
+
+    parser.add_argument("file_in", type=str)
+    parser.add_argument("file_out", type=str)
+
+    args = parser.parse_args()
+    if hasattr(args, "func"):
+        args.func(args)
+
+
+main()
