@@ -18,3 +18,16 @@ def temp_file():
             os.rmdir(tmpdir)  # Remove directory
         except:
             pass
+
+
+def interleave(iter1, iter2):
+    for a, b in zip(iter1, iter2):
+        yield a
+        yield b
+
+
+# https://stackoverflow.com/a/312464
+def chunks(lst, n):
+    for i in range(0, len(lst), n):
+        yield lst[i:i + n]
+
