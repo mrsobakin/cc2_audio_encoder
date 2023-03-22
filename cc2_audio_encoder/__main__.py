@@ -49,8 +49,8 @@ def main():
     parser_bnsf = subparsers.add_parser("bnsf", description="BNSF audio encoder")
     parser_bnsf.add_argument("--stereo", help="Encode as a stereo", action="store_true")
     parser_bnsf.add_argument("--loop", help="Include loop info to the bnsf", action="store_true")
-    parser_bnsf.add_argument("--loop-start", help="Start of the loop (In samples). Default is 0. Implies --loop")
-    parser_bnsf.add_argument("--loop-end", help="End of the loop (In samples). Default is the last audio sample. Implies --loop")
+    parser_bnsf.add_argument("--loop-start", help="Start of the loop (In samples). Default is 0. Implies --loop", type=int)
+    parser_bnsf.add_argument("--loop-end", help="End of the loop (In samples). Default is the last audio sample. Implies --loop", type=int)
     parser_bnsf.set_defaults(func=cmd_bnsf)
 
     parser.add_argument("file_in", type=str)
